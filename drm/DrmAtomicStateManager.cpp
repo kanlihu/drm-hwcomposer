@@ -159,7 +159,9 @@ auto DrmAtomicStateManager::CommitFrame(AtomicCommitArgs &args) -> int {
       return -EINVAL;
   }
 
+  //ALOGI("kanli before hdr\n");
   if (args.hdr_metadata && connector->GetHdrOutputMetadataProperty()) {
+  ALOGI("kanli set hdr meta\n");
     auto blob = drm->RegisterUserPropertyBlob(args.hdr_metadata.get(),
                                               sizeof(hdr_output_metadata));
     new_frame_state.hdr_metadata_blob = std::move(blob);

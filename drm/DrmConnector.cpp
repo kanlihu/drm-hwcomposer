@@ -97,10 +97,16 @@ auto DrmConnector::Init()-> bool {
 
   UpdateEdidProperty();
 #if HAS_LIBDISPLAY_INFO
-  auto edid = LibdisplayEdidWrapper::Create(GetEdidBlob());
-  edid_wrapper_ = edid ? std::move(edid) : std::make_unique<EdidWrapper>();
+  auto edid = H3CdisplayEdidWrapper::Create(GetEdidBlob());
+  if (edid) {
+	edid_wrapper_ = edid ? std::move(edid) : std::make_unique<EdidWrapper>();
+  } else {
+	  auto edid_new = LibdisplayEdidWrapper::Create(GetEdidBlob());
+	  edid_wrapper_ = edid_new ? std::move(edid_new) : std::make_unique<EdidWrapper>();
+  }
 #else
-  edid_wrapper_ = std::make_unique<EdidWrapper>();
+  auto edid = H3CdisplayEdidWrapper::Create(GetEdidBlob());
+  edid_wrapper_ = edid ? std::move(edid) : std::make_unique<EdidWrapper>();
 #endif
 
   if (IsWriteback() &&

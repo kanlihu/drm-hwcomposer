@@ -823,6 +823,7 @@ ndk::ScopedAStatus ComposerClient::getColorModes(
 
   uint32_t num_modes = 0;
   auto error = Hwc2toHwc3Error(display->GetColorModes(&num_modes, nullptr));
+  ALOGI("kanli num_modes 1 %d", num_modes);
   if (error != hwc3::Error::kNone) {
     return ToBinderStatus(error);
   }
@@ -830,11 +831,14 @@ ndk::ScopedAStatus ComposerClient::getColorModes(
   std::vector<int32_t> hwc2_color_modes(num_modes);
   error = Hwc2toHwc3Error(
       display->GetColorModes(&num_modes, hwc2_color_modes.data()));
+        ALOGI("kanli num_modes 2 %d", num_modes);
+
   if (error != hwc3::Error::kNone) {
     return ToBinderStatus(error);
   }
 
   for (const auto& mode : hwc2_color_modes) {
+	ALOGI("kanli getColorModes %d",Hwc2ColorModeToHwc3(mode));
     color_modes->push_back(Hwc2ColorModeToHwc3(mode));
   }
 
@@ -928,9 +932,13 @@ ndk::ScopedAStatus ComposerClient::getDisplayCapabilities(
     return ToBinderStatus(error);
   }
 
+  ALOGI("kanli %s %d 1 num_capabilities %d",__FUNCTION__,__LINE__, num_capabilities);
+
   std::vector<uint32_t> out_caps(num_capabilities);
   error = Hwc2toHwc3Error(
       display->GetDisplayCapabilities(&num_capabilities, out_caps.data()));
+
+  ALOGI("kanli %s %d 2 num_capabilities %d",__FUNCTION__,__LINE__, num_capabilities);
   if (error != hwc3::Error::kNone) {
     return ToBinderStatus(error);
   }
@@ -1137,8 +1145,9 @@ ndk::ScopedAStatus ComposerClient::getHdrCapabilities(int64_t display_id,
   }
 
   caps->types.reserve(num_types);
-  for (const auto type : out_types)
+  for (const auto type : out_types) {
     caps->types.emplace_back(Hwc2HdrTypeToHwc3(type));
+  }
 
   return ndk::ScopedAStatus::ok();
 }
